@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { fetchapi } from './api'
-import './App.css'
+import Productlist from './components/Productlist';
 
 function App() {
 
@@ -12,9 +12,22 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-     {data ? data.map((e) => <li>{e.title}</li>) : <p> No data</p>}
-    </div>
+    <>
+      {data ? data.map((e) =>
+        <Productlist
+        
+          title={e.title}
+          image={e.image}
+          desc={e.description}
+          category={e.category}
+          price={e.price}
+          rating={{
+            rate: e.rate,
+            count: e.count
+          }}
+
+        />) : <p> No data</p>}
+    </>
   );
 }
 
