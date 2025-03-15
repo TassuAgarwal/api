@@ -6,14 +6,21 @@ function App() {
 
   const [data, setdata] = useState(null);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    // fetchapi().then((api) => console.log(api));
-    fetchapi().then((api) => setdata(api));
+    fetchapi().then((api) => {
+      setdata(api);
+    })
+      .catch((error) => console.log("error in data", error)
+      )
+      .finally(() => setLoading(false));
   }, []);
 
   return (
     <>
-      {data ? data.map((e) =>
+
+      {loading ? (<p>Data loading</p>) : data ? data.map((e) =>
         <Productlist
           id={e.id}
           title={e.title}
