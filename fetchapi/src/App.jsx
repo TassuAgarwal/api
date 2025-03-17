@@ -1,27 +1,50 @@
 import { useEffect, useState } from 'react'
-import { fetchapi } from './api'
-import Productlist from './components/Productlist';
+import { fetchApi } from './api'
+import ProductList from './components/ProductList';
 
 function App() {
-
-  const [data, setdata] = useState(null);
-
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // old (.then not preferred - callback hell)
+
+  // useEffect(() => {
+  //   fetchApi().then((api) => {
+  //     setData(api);
+  //   })
+  //     .catch((error) => console.log("error in data", error)
+  //     )
+  //     .finally(() => setLoading(false));
+  // }, []);
+
+
+  // new (try/catch method)
+
   useEffect(() => {
-    fetchapi().then((api) => {
-      setdata(api);
-    })
-      .catch((error) => console.log("error in data", error)
-      )
-      .finally(() => setLoading(false));
+    const fetchData = async () => {
+      try {
+        const apiData = await fetchApi();
+        setData(apiData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
+
+
+  // Prevent unnecessary loop - before return 
+  if (loading) return <p>Data Loading...</p>;
+  if (!data) return <p>No data found</p>;
 
   return (
     <>
-
-      {loading ? (<p>Data loading</p>) : data ? data.map((e) =>
-        <Productlist
+      {data.map((e) => (
+        <ProductList
+          key={e.id}
           id={e.id}
           title={e.title}
           image={e.image}
@@ -32,10 +55,10 @@ function App() {
             rate: e.rating?.rate,
             count: e.rating?.count
           }}
-
-        />) : <p> No data</p>}
+        />
+      ))}
     </>
   );
 }
 
-export default App
+export default App;
